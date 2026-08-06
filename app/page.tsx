@@ -88,8 +88,6 @@ export default function ComplaintForm() {
     }
 
     setSubmitting(true)
-
-    // Simulate intelligent AI triage delay
     await new Promise((r) => setTimeout(r, 650))
 
     try {
@@ -116,12 +114,12 @@ export default function ComplaintForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-slate-100 flex flex-col justify-between">
-      {/* Top Navbar */}
-      <header className="border-b border-slate-700/60 bg-slate-900/80 backdrop-blur-md sticky top-0 z-30">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col justify-between">
+      {/* 30% Secondary: Dark Navy Header */}
+      <header className="border-b border-slate-800 bg-slate-900 sticky top-0 z-30 shadow-md">
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 flex items-center justify-center text-xl shadow-lg shadow-indigo-500/20">
+            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-xl shadow-md text-white">
               🏛️
             </div>
             <div>
@@ -138,12 +136,12 @@ export default function ComplaintForm() {
           <div className="flex items-center gap-2.5">
             {/* Citizen Karma Points Pill */}
             {citizen && (
-              <div className="hidden sm:flex items-center gap-2 bg-slate-800/90 border border-amber-500/30 px-3 py-1.5 rounded-xl shadow-sm">
+              <div className="hidden sm:flex items-center gap-2 bg-slate-800 border border-amber-500/40 px-3 py-1.5 rounded-xl shadow-sm">
                 <span className="text-sm">👤</span>
                 <div className="text-left">
-                  <div className="text-xs font-bold text-slate-200 leading-none">{citizen.name}</div>
+                  <div className="text-xs font-bold text-white leading-none">{citizen.name}</div>
                   <div className="text-[10px] font-bold text-amber-400 mt-0.5 flex items-center gap-1">
-                    <span>⭐ {citizen.credits} Civic Credits</span>
+                    <span>⭐ {citizen.credits} Credits</span>
                     <span className="text-slate-500">·</span>
                     <span className="text-emerald-400">{citizen.badge}</span>
                   </div>
@@ -153,14 +151,14 @@ export default function ComplaintForm() {
 
             <Link
               href="/dashboard"
-              className="text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600/60 px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 shadow-sm"
+              className="text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 shadow-sm"
             >
               <span>📊</span>
               <span>Dashboard</span>
             </Link>
             <Link
               href="/admin"
-              className="text-xs font-medium bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 px-3 py-2 rounded-lg transition"
+              className="text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-lg transition"
             >
               🔒 Admin
             </Link>
@@ -168,50 +166,51 @@ export default function ComplaintForm() {
         </div>
       </header>
 
-      {/* Main Content Form */}
+      {/* 60% Dominant: Clean Off-White Main Content */}
       <main className="max-w-xl w-full mx-auto px-4 py-8 flex-1">
-        {/* Civic Reward Banner */}
+        {/* Civic Reward Callout */}
         {citizen && (
-          <div className="mb-5 bg-gradient-to-r from-amber-500/15 via-indigo-500/15 to-emerald-500/15 border border-amber-500/30 rounded-2xl p-3.5 flex items-center justify-between shadow-lg">
+          <div className="mb-6 bg-white border border-slate-200 rounded-2xl p-4 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-xl">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-xl text-amber-600">
                 🎁
               </div>
               <div>
-                <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                  <span>Earn Civic Karma Rewards</span>
-                  <span className="bg-amber-400/20 text-amber-300 text-[10px] px-1.5 py-0.2 rounded border border-amber-400/30">
-                    +75 Credits
+                <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                  <span>Earn Civic Rewards</span>
+                  <span className="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-200">
+                    +75 Credits per report
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-300">
-                  Submit verified issues with photo evidence to level up your Citizen Badge!
+                <div className="text-[11px] text-slate-500 mt-0.5">
+                  Submit verified issues to level up your community rank!
                 </div>
               </div>
             </div>
-            <div className="text-right pl-2">
-              <div className="text-xs font-extrabold text-amber-300">⭐ {citizen.credits}</div>
+            <div className="text-right pl-2 border-l border-slate-100">
+              <div className="text-xs font-extrabold text-amber-600">⭐ {citizen.credits} pts</div>
               <div className="text-[10px] text-slate-400">{citizen.level.split('·')[0]}</div>
             </div>
           </div>
         )}
 
         <div className="text-center mb-6">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
             Report a Civic Issue
           </h1>
-          <p className="text-sm text-slate-300 mt-1.5 max-w-md mx-auto">
-            Instant AI routing directly to the responsible civic department. Track live resolution on our public map.
+          <p className="text-sm text-slate-600 mt-1.5 max-w-md mx-auto">
+            Direct AI triage to municipal departments. Track repairs in real-time on our public map.
           </p>
         </div>
 
+        {/* Form Card (White with crisp shadow) */}
         <form
           onSubmit={handleSubmit}
-          className="bg-slate-800/90 backdrop-blur-xl border border-slate-700/80 rounded-2xl p-6 sm:p-7 shadow-2xl space-y-6"
+          className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-7 shadow-lg space-y-5"
         >
           {/* Category Selection */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2.5">
               1. Select Issue Category
             </label>
             <div className="grid grid-cols-2 gap-2.5">
@@ -222,23 +221,23 @@ export default function ComplaintForm() {
                     type="button"
                     key={cat.value}
                     onClick={() => setCategory(cat.value)}
-                    className={`p-3 rounded-xl border text-left transition-all duration-200 flex flex-col justify-between ${
+                    className={`p-3 rounded-xl border text-left transition-all duration-150 flex flex-col justify-between ${
                       isSelected
-                        ? 'bg-gradient-to-br from-indigo-600 to-indigo-700 border-indigo-400 text-white shadow-lg shadow-indigo-600/25 ring-2 ring-indigo-400/40'
-                        : 'bg-slate-900/60 border-slate-700/80 text-slate-300 hover:border-slate-500 hover:bg-slate-900'
+                        ? 'bg-blue-50 border-blue-600 text-blue-950 shadow-sm ring-2 ring-blue-600/30'
+                        : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                     }`}
                   >
                     <div className="flex items-center justify-between w-full mb-1">
                       <span className="text-lg">{cat.icon}</span>
                       <span
                         className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${
-                          isSelected ? 'bg-indigo-900/60 text-indigo-200' : 'bg-slate-800 text-slate-400'
+                          isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
                         }`}
                       >
                         {cat.dept}
                       </span>
                     </div>
-                    <span className="font-semibold text-sm leading-snug">{cat.label.replace(/^[^\s]+\s/, '')}</span>
+                    <span className="font-bold text-sm leading-snug">{cat.label.replace(/^[^\s]+\s/, '')}</span>
                   </button>
                 )
               })}
@@ -247,50 +246,50 @@ export default function ComplaintForm() {
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
               2. Describe the Problem
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              placeholder="e.g. Deep crater on main lane near marketplace, causing traffic slowdown and safety risk..."
-              className="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+              placeholder="e.g. Deep crater on main road near crossing, causing heavy traffic and risk for two-wheelers..."
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition"
             />
           </div>
 
           {/* Photo Upload with Live Preview */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                 3. Attach Photo Evidence
               </label>
-              <span className="text-[10px] font-semibold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/30">
+              <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
                 +25 Bonus Credits
               </span>
             </div>
             
             {imagePreview ? (
-              <div className="relative rounded-xl overflow-hidden border border-indigo-500/40 bg-slate-900 p-2 flex items-center gap-3">
+              <div className="relative rounded-xl overflow-hidden border border-blue-300 bg-blue-50/50 p-2.5 flex items-center gap-3">
                 <img
                   src={imagePreview}
                   alt="Issue preview"
                   onError={(e) => {
                     e.currentTarget.src = getCategoryFallbackImage(category)
                   }}
-                  className="w-20 h-20 object-cover rounded-lg border border-slate-700"
+                  className="w-20 h-20 object-cover rounded-lg border border-slate-300 bg-white"
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-medium text-emerald-400 flex items-center gap-1">
+                  <div className="text-xs font-bold text-emerald-600 flex items-center gap-1">
                     <span>✓</span> Photo ready (+25 bonus credits)
                   </div>
-                  <p className="text-xs text-slate-400 truncate mt-0.5">
+                  <p className="text-xs text-slate-600 truncate mt-0.5 font-medium">
                     {imageFile?.name || 'Uploaded evidence photo'}
                   </p>
                   <button
                     type="button"
                     onClick={removeImage}
-                    className="mt-1.5 text-xs text-red-400 hover:text-red-300 font-medium underline"
+                    className="mt-1.5 text-xs text-red-600 hover:text-red-700 font-semibold underline"
                   >
                     Remove photo
                   </button>
@@ -299,7 +298,7 @@ export default function ComplaintForm() {
             ) : (
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="cursor-pointer border-2 border-dashed border-slate-700 hover:border-indigo-500/60 bg-slate-900/50 hover:bg-slate-900/80 rounded-xl p-4 text-center transition group"
+                className="cursor-pointer border-2 border-dashed border-slate-300 hover:border-blue-500 bg-slate-50 hover:bg-blue-50/30 rounded-xl p-4 text-center transition group"
               >
                 <input
                   ref={fileInputRef}
@@ -308,11 +307,11 @@ export default function ComplaintForm() {
                   onChange={handleImageChange}
                   className="hidden"
                 />
-                <div className="text-2xl mb-1 group-hover:scale-110 transition-transform">📸</div>
-                <div className="text-xs font-medium text-slate-300 group-hover:text-indigo-300">
+                <div className="text-2xl mb-1 group-hover:scale-105 transition-transform">📸</div>
+                <div className="text-xs font-bold text-slate-700 group-hover:text-blue-600">
                   Click to upload evidence photo
                 </div>
-                <div className="text-[11px] text-slate-500 mt-0.5">JPG, PNG or Mobile Camera capture</div>
+                <div className="text-[11px] text-slate-500 mt-0.5">JPG, PNG or Mobile Camera photo</div>
               </div>
             )}
           </div>
@@ -320,46 +319,46 @@ export default function ComplaintForm() {
           {/* Location & Name Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                 Location Pin
               </label>
               <button
                 type="button"
                 onClick={getLocation}
-                className="w-full bg-slate-900/80 border border-slate-700 hover:border-slate-600 rounded-xl px-3 py-2.5 text-xs text-slate-200 flex items-center justify-between transition"
+                className="w-full bg-slate-50 border border-slate-300 hover:border-blue-500 rounded-xl px-3 py-2.5 text-xs text-slate-800 flex items-center justify-between transition font-medium"
               >
                 <span className="flex items-center gap-1.5">
-                  <span className="text-emerald-400">📍</span>
+                  <span className="text-blue-600">📍</span>
                   {locating
                     ? 'Capturing GPS...'
                     : coords
                     ? `${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}`
                     : 'Get GPS Location'}
                 </span>
-                <span className="text-[10px] text-indigo-400 underline font-medium">
+                <span className="text-[10px] text-blue-600 font-bold underline">
                   {locating ? '...' : 'Refresh'}
                 </span>
               </button>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                 Citizen Name
               </label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Citizen Name"
-                className="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white font-medium"
               />
             </div>
           </div>
 
-          {/* Submit Button */}
+          {/* 10% Accent: Vibrant Blue Submit Button */}
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-indigo-500/25 transition duration-200 flex items-center justify-center gap-2 disabled:opacity-50 text-sm"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition duration-150 flex items-center justify-center gap-2 disabled:opacity-50 text-sm"
           >
             {submitting ? (
               <>
@@ -367,7 +366,7 @@ export default function ComplaintForm() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                 </svg>
-                <span>Routing to Department & Calculating Credits...</span>
+                <span>Routing to Department & Awarding Credits...</span>
               </>
             ) : (
               <>
@@ -381,9 +380,9 @@ export default function ComplaintForm() {
         <div className="mt-4 text-center">
           <Link
             href="/dashboard"
-            className="text-xs text-slate-400 hover:text-slate-200 transition inline-flex items-center gap-1"
+            className="text-xs text-blue-600 hover:text-blue-700 font-semibold transition inline-flex items-center gap-1"
           >
-            <span>View all public complaints & live map</span>
+            <span>View public complaints & live map</span>
             <span>→</span>
           </Link>
         </div>
@@ -391,18 +390,18 @@ export default function ComplaintForm() {
 
       {/* Confirmation Modal Popup */}
       {submittedComplaint && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl text-left relative overflow-hidden animate-scaleUp">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl text-left relative overflow-hidden animate-scaleUp">
             {/* Reward Notification Banner */}
-            <div className="bg-gradient-to-r from-amber-500/20 to-emerald-500/20 border border-amber-500/40 rounded-xl p-3 mb-4 flex items-center justify-between">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5 mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="text-2xl">🎉</span>
                 <div>
-                  <div className="text-xs font-bold text-amber-300">
+                  <div className="text-xs font-extrabold text-amber-800">
                     +{submittedComplaint.creditsEarned} Civic Karma Credits Awarded!
                   </div>
-                  <div className="text-[11px] text-slate-300">
-                    New Balance: <span className="font-bold text-white">⭐ {submittedComplaint.updatedCitizen.credits} pts</span> ({submittedComplaint.updatedCitizen.level.split('·')[0]})
+                  <div className="text-[11px] text-amber-700">
+                    New Balance: <span className="font-extrabold text-slate-900">⭐ {submittedComplaint.updatedCitizen.credits} pts</span> ({submittedComplaint.updatedCitizen.level.split('·')[0]})
                   </div>
                 </div>
               </div>
@@ -410,19 +409,19 @@ export default function ComplaintForm() {
             </div>
 
             {/* Header Badge */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <span className="text-2xl">✅</span>
                 <div>
-                  <h3 className="font-bold text-white text-base">Complaint Registered</h3>
-                  <p className="text-[11px] text-emerald-400 font-mono">
+                  <h3 className="font-bold text-slate-900 text-base">Complaint Registered</h3>
+                  <p className="text-[11px] text-blue-600 font-mono font-bold">
                     Ticket ID: {submittedComplaint.complaint.id.toUpperCase()}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setSubmittedComplaint(null)}
-                className="text-slate-400 hover:text-white text-lg font-bold p-1"
+                className="text-slate-400 hover:text-slate-700 text-lg font-bold p-1"
               >
                 ✕
               </button>
@@ -430,38 +429,38 @@ export default function ComplaintForm() {
 
             {/* Duplicate Notice if nearby report exists */}
             {submittedComplaint.duplicateCount > 0 && (
-              <div className="my-3.5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-2.5">
+              <div className="my-3.5 p-3 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2.5">
                 <span className="text-lg">⚡</span>
-                <div className="text-xs text-amber-200">
-                  <span className="font-semibold text-amber-300">Nearby match detected: </span>
-                  {submittedComplaint.duplicateCount} similar report in this zone. Linked to priority cluster for faster crew dispatch.
+                <div className="text-xs text-amber-800">
+                  <span className="font-bold">Nearby match detected: </span>
+                  {submittedComplaint.duplicateCount} similar report in this zone. Linked to priority cluster for municipal dispatch.
                 </div>
               </div>
             )}
 
             {/* Details Box */}
-            <div className="my-3.5 space-y-2 text-xs bg-slate-800/80 rounded-xl p-3.5 border border-slate-700/60">
-              <div className="flex justify-between py-1 border-b border-slate-700/50">
-                <span className="text-slate-400">Category:</span>
-                <span className="font-semibold text-white capitalize">
+            <div className="my-3.5 space-y-2 text-xs bg-slate-50 rounded-xl p-3.5 border border-slate-200">
+              <div className="flex justify-between py-1 border-b border-slate-200/60">
+                <span className="text-slate-500">Category:</span>
+                <span className="font-bold text-slate-900 capitalize">
                   {submittedComplaint.complaint.category}
                 </span>
               </div>
-              <div className="flex justify-between py-1 border-b border-slate-700/50">
-                <span className="text-slate-400">Assigned Department:</span>
-                <span className="font-semibold text-indigo-300">
+              <div className="flex justify-between py-1 border-b border-slate-200/60">
+                <span className="text-slate-500">Assigned Department:</span>
+                <span className="font-bold text-blue-700">
                   {submittedComplaint.complaint.department}
                 </span>
               </div>
-              <div className="flex justify-between py-1 border-b border-slate-700/50">
-                <span className="text-slate-400">Live Status:</span>
-                <span className="font-semibold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full">
+              <div className="flex justify-between py-1 border-b border-slate-200/60">
+                <span className="text-slate-500">Live Status:</span>
+                <span className="font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
                   Pending Verification
                 </span>
               </div>
               <div className="flex justify-between py-1">
-                <span className="text-slate-400">Citizen Reporter:</span>
-                <span className="text-slate-300 font-medium">
+                <span className="text-slate-500">Citizen Reporter:</span>
+                <span className="text-slate-800 font-bold">
                   {submittedComplaint.complaint.reporter_name}
                 </span>
               </div>
@@ -470,14 +469,14 @@ export default function ComplaintForm() {
             {/* Photo attached */}
             {submittedComplaint.complaint.image_url && (
               <div className="mb-4">
-                <div className="text-[11px] text-slate-400 mb-1">Evidence Photo Attached:</div>
+                <div className="text-[11px] text-slate-500 font-semibold mb-1">Evidence Photo:</div>
                 <img
                   src={submittedComplaint.complaint.image_url}
                   alt="Submitted evidence"
                   onError={(e) => {
                     e.currentTarget.src = getCategoryFallbackImage(submittedComplaint.complaint.category)
                   }}
-                  className="w-full h-28 object-cover rounded-lg border border-slate-700"
+                  className="w-full h-28 object-cover rounded-lg border border-slate-200 bg-white"
                 />
               </div>
             )}
@@ -486,14 +485,14 @@ export default function ComplaintForm() {
             <div className="space-y-2 pt-2">
               <Link
                 href="/dashboard"
-                className="w-full bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-white font-bold py-2.5 px-4 rounded-xl text-center block text-xs shadow-md transition"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-4 rounded-xl text-center block text-xs shadow-md transition"
               >
                 📍 View Issue On Live Map & Dashboard →
               </Link>
               <button
                 type="button"
                 onClick={() => setSubmittedComplaint(null)}
-                className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium py-2 px-4 rounded-xl text-xs transition"
+                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-4 rounded-xl text-xs transition border border-slate-200"
               >
                 Submit Another Report (+75 Credits)
               </button>
@@ -502,8 +501,8 @@ export default function ComplaintForm() {
         </div>
       )}
 
-      {/* Footer */}
-      <footer className="py-4 text-center text-xs text-slate-500 border-t border-slate-800">
+      {/* 30% Secondary: Dark Footer */}
+      <footer className="py-4 text-center text-xs text-slate-400 bg-slate-900 border-t border-slate-800">
         Civic Complaint & Transparency Platform · Hackathon 2026 Edition
       </footer>
     </div>

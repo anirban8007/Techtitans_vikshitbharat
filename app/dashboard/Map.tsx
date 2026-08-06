@@ -15,9 +15,9 @@ L.Icon.Default.mergeOptions({
 })
 
 const STATUS_COLOR: Record<string, string> = {
-  pending: '#ef4444',
-  in_progress: '#f59e0b',
-  resolved: '#10b981',
+  pending: '#dc2626',
+  in_progress: '#d97706',
+  resolved: '#059669',
 }
 
 const CATEGORY_ICON: Record<string, string> = {
@@ -44,8 +44,8 @@ export default function Map({ complaints }: { complaints: Complaint[] }) {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {complaints.map((c) => {
-        const color = STATUS_COLOR[c.status] || '#6366f1'
-        const iconHtml = `<div style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.5); transform: scale(1); transition: transform 0.2s;"></div>`
+        const color = STATUS_COLOR[c.status] || '#2563eb'
+        const iconHtml = `<div style="background-color: ${color}; width: 18px; height: 18px; border-radius: 50%; border: 3px solid white; box-shadow: 0 3px 8px rgba(0,0,0,0.35); transform: scale(1); transition: transform 0.2s;"></div>`
 
         return (
           <Marker
@@ -54,14 +54,14 @@ export default function Map({ complaints }: { complaints: Complaint[] }) {
             icon={L.divIcon({
               html: iconHtml,
               className: 'custom-leaflet-marker',
-              iconSize: [16, 16],
-              iconAnchor: [8, 8],
+              iconSize: [18, 18],
+              iconAnchor: [9, 9],
             })}
           >
-            <Popup className="custom-popup" minWidth={220} maxWidth={280}>
+            <Popup className="custom-popup" minWidth={230} maxWidth={290}>
               <div className="text-slate-900 font-sans p-1">
                 <div className="flex items-center justify-between gap-2 mb-1.5">
-                  <span className="font-bold text-xs uppercase tracking-wide flex items-center gap-1 text-slate-800">
+                  <span className="font-bold text-xs uppercase tracking-wide flex items-center gap-1 text-slate-900">
                     <span>{CATEGORY_ICON[c.category] || '📍'}</span>
                     <span>{c.category}</span>
                   </span>
@@ -73,7 +73,7 @@ export default function Map({ complaints }: { complaints: Complaint[] }) {
                   </span>
                 </div>
 
-                <div className="mb-2 rounded-lg overflow-hidden border border-slate-200 bg-slate-900">
+                <div className="mb-2 rounded-lg overflow-hidden border border-slate-200 bg-slate-100">
                   <img
                     src={c.image_url || getCategoryFallbackImage(c.category)}
                     alt={c.category}
@@ -84,19 +84,19 @@ export default function Map({ complaints }: { complaints: Complaint[] }) {
                   />
                 </div>
 
-                <p className="text-xs text-slate-700 leading-snug line-clamp-3 mb-2 font-normal">
+                <p className="text-xs text-slate-700 leading-snug line-clamp-3 mb-2 font-medium">
                   {c.description}
                 </p>
 
-                <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500">
-                  <span className="font-semibold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded">
+                <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500 font-medium">
+                  <span className="font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
                     {c.department || 'Civic'}
                   </span>
                   <span>{new Date(c.created_at).toLocaleDateString()}</span>
                 </div>
 
                 {c.is_duplicate_of && (
-                  <div className="mt-1.5 bg-amber-50 border border-amber-200 text-amber-800 text-[10px] px-2 py-0.5 rounded font-medium">
+                  <div className="mt-1.5 bg-amber-50 border border-amber-200 text-amber-800 text-[10px] px-2 py-0.5 rounded font-bold">
                     ⚡ Linked duplicate report
                   </div>
                 )}
