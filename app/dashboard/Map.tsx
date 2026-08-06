@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { Complaint } from '@/lib/supabase'
+import { getCategoryFallbackImage } from '@/lib/dataService'
 
 // Fix default marker icons breaking in Next.js
 delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -72,15 +73,16 @@ export default function Map({ complaints }: { complaints: Complaint[] }) {
                   </span>
                 </div>
 
-                {c.image_url && (
-                  <div className="mb-2 rounded-lg overflow-hidden border border-slate-200">
-                    <img
-                      src={c.image_url}
-                      alt={c.category}
-                      className="w-full h-24 object-cover"
-                    />
-                  </div>
-                )}
+                <div className="mb-2 rounded-lg overflow-hidden border border-slate-200 bg-slate-900">
+                  <img
+                    src={c.image_url || getCategoryFallbackImage(c.category)}
+                    alt={c.category}
+                    onError={(e) => {
+                      e.currentTarget.src = getCategoryFallbackImage(c.category)
+                    }}
+                    className="w-full h-24 object-cover"
+                  />
+                </div>
 
                 <p className="text-xs text-slate-700 leading-snug line-clamp-3 mb-2 font-normal">
                   {c.description}

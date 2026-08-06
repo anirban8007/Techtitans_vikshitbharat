@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { Complaint } from '@/lib/supabase'
-import { getStoredComplaints, resetToSeedData } from '@/lib/dataService'
+import { getStoredComplaints, resetToSeedData, getCitizenProfile, CitizenProfile, getCategoryFallbackImage } from '@/lib/dataService'
 
 // Dynamic import with SSR disabled for Leaflet map
 const Map = dynamic(() => import('./Map'), {
@@ -39,23 +39,26 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [selectedComplaintId, setSelectedComplaintId] = useState<string | null>(null)
+  const [citizen, setCitizen] = useState<CitizenProfile | null>(null)
 
   const reloadData = () => {
     const data = getStoredComplaints()
     setComplaints(data)
+    setCitizen(getCitizenProfile())
     setLoading(false)
   }
 
   useEffect(() => {
     reloadData()
 
-    // Listen for cross-component or cross-tab updates
     const handleUpdate = () => reloadData()
     window.addEventListener('civic_complaints_updated', handleUpdate)
+    window.addEventListener('civic_citizen_updated', handleUpdate)
     window.addEventListener('storage', handleUpdate)
 
     return () => {
       window.removeEventListener('civic_complaints_updated', handleUpdate)
+      window.removeEventListener('civic_citizen_updated', handleUpdate)
       window.removeEventListener('storage', handleUpdate)
     }
   }, [])
@@ -113,6 +116,21 @@ export default function Dashboard() {
         </div>
 
         <div className="flex items-center gap-2.5">
+          {/* Citizen Rewards Pill */}
+          {citizen && (
+            <div className="hidden sm:flex items-center gap-2 bg-slate-800/90 border border-amber-500/30 px-3 py-1.5 rounded-xl shadow-sm">
+              <span className="text-sm">👤</span>
+              <div className="text-left">
+                <div className="text-xs font-bold text-slate-200 leading-none">{citizen.name}</div>
+                <div className="text-[10px] font-bold text-amber-400 mt-0.5 flex items-center gap-1">
+                  <span>⭐ {citizen.credits} Civic Credits</span>
+                  <span className="text-slate-500">·</span>
+                  <span className="text-emerald-400">{citizen.badge}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           <button
             onClick={() => {
               resetToSeedData()
@@ -295,16 +313,17 @@ export default function Dashboard() {
                         <StatusBadge status={c.status} />
                       </div>
 
-                      {/* Photo Thumbnail if exists */}
-                      {c.image_url && (
-                        <div className="mt-2.5 rounded-lg overflow-hidden border border-slate-800 max-h-32">
-                          <img
-                            src={c.image_url}
-                            alt={c.category}
-                            className="w-full h-24 object-cover hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                      )}
+                      {/* Photo Thumbnail with Safe Fallback */}
+                      <div className="mt-2.5 rounded-lg overflow-hidden border border-slate-800 max-h-32 bg-slate-950">
+                        <img
+                          src={c.image_url || getCategoryFallbackImage(c.category)}
+                          alt={c.category}
+                          onError={(e) => {
+                            e.currentTarget.src = getCategoryFallbackImage(c.category)
+                          }}
+                          className="w-full h-24 object-cover hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
 
                       {/* Description */}
                       <p className="text-xs text-slate-300 mt-2 leading-relaxed line-clamp-2">
@@ -319,11 +338,16 @@ export default function Dashboard() {
                         </div>
                       )}
 
-                      {/* Bottom Info: Reporter & Timestamp */}
+                      {/* Bottom Info: Reporter with Citizen Karma points & Timestamp */}
                       <div className="mt-2.5 pt-2 border-t border-slate-800/60 flex items-center justify-between text-[11px] text-slate-400">
-                        <span className="truncate max-w-[160px]">
-                          👤 {c.reporter_name || 'Anonymous'}
-                        </span>
+                        <div className="flex items-center gap-1.5 truncate max-w-[200px]">
+                          <span className="text-slate-300 font-medium truncate">
+                            👤 {c.reporter_name || 'Citizen'}
+                          </span>
+                          <span className="text-[10px] text-amber-400 font-bold bg-amber-400/10 px-1.5 py-0.2 rounded border border-amber-400/20">
+                            ⭐ 450 pts
+                          </span>
+                        </div>
                         <span>{new Date(c.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>

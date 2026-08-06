@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { CATEGORY_DEPARTMENT, Complaint } from '@/lib/supabase'
-import { createComplaint } from '@/lib/dataService'
+import { createComplaint, getCitizenProfile, CitizenProfile, getCategoryFallbackImage } from '@/lib/dataService'
 
 const CATEGORIES = [
   { value: 'pothole', label: '🕳️ Pothole', icon: '🕳️', desc: 'Road craters, tarmac cracks', dept: 'PWD' },
@@ -23,8 +23,24 @@ export default function ComplaintForm() {
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>({ lat: 22.5186, lng: 88.3655 })
   const [locating, setLocating] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [submittedComplaint, setSubmittedComplaint] = useState<{ complaint: Complaint; duplicateCount: number } | null>(null)
+  const [citizen, setCitizen] = useState<CitizenProfile | null>(null)
+  const [submittedComplaint, setSubmittedComplaint] = useState<{
+    complaint: Complaint
+    duplicateCount: number
+    creditsEarned: number
+    updatedCitizen: CitizenProfile
+  } | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const profile = getCitizenProfile()
+    setCitizen(profile)
+    setName(profile.name)
+
+    const handleCitizenUpdate = () => setCitizen(getCitizenProfile())
+    window.addEventListener('civic_citizen_updated', handleCitizenUpdate)
+    return () => window.removeEventListener('civic_citizen_updated', handleCitizenUpdate)
+  }, [])
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -53,7 +69,6 @@ export default function ComplaintForm() {
           setLocating(false)
         },
         () => {
-          // Reliable fallback: Kolkata Central coordinates
           setCoords({ lat: 22.5186, lng: 88.3655 })
           setLocating(false)
         },
@@ -74,7 +89,7 @@ export default function ComplaintForm() {
 
     setSubmitting(true)
 
-    // Simulate quick intelligent AI triage delay (600ms) for realistic UX
+    // Simulate intelligent AI triage delay
     await new Promise((r) => setTimeout(r, 650))
 
     try {
@@ -84,12 +99,12 @@ export default function ComplaintForm() {
         latitude: coords.lat,
         longitude: coords.lng,
         image_url: imagePreview,
-        reporter_name: name.trim() || 'Citizen (Anonymous)',
+        reporter_name: name.trim() || citizen?.name || 'Citizen (Anonymous)',
       })
 
       setSubmittedComplaint(result)
+      setCitizen(result.updatedCitizen)
       setDescription('')
-      setName('')
       setImageFile(null)
       setImagePreview(null)
       if (fileInputRef.current) fileInputRef.current.value = ''
@@ -120,13 +135,28 @@ export default function ComplaintForm() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
+            {/* Citizen Karma Points Pill */}
+            {citizen && (
+              <div className="hidden sm:flex items-center gap-2 bg-slate-800/90 border border-amber-500/30 px-3 py-1.5 rounded-xl shadow-sm">
+                <span className="text-sm">👤</span>
+                <div className="text-left">
+                  <div className="text-xs font-bold text-slate-200 leading-none">{citizen.name}</div>
+                  <div className="text-[10px] font-bold text-amber-400 mt-0.5 flex items-center gap-1">
+                    <span>⭐ {citizen.credits} Civic Credits</span>
+                    <span className="text-slate-500">·</span>
+                    <span className="text-emerald-400">{citizen.badge}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <Link
               href="/dashboard"
               className="text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600/60 px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 shadow-sm"
             >
               <span>📊</span>
-              <span>Live Dashboard</span>
+              <span>Dashboard</span>
             </Link>
             <Link
               href="/admin"
@@ -140,6 +170,32 @@ export default function ComplaintForm() {
 
       {/* Main Content Form */}
       <main className="max-w-xl w-full mx-auto px-4 py-8 flex-1">
+        {/* Civic Reward Banner */}
+        {citizen && (
+          <div className="mb-5 bg-gradient-to-r from-amber-500/15 via-indigo-500/15 to-emerald-500/15 border border-amber-500/30 rounded-2xl p-3.5 flex items-center justify-between shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-xl">
+                🎁
+              </div>
+              <div>
+                <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                  <span>Earn Civic Karma Rewards</span>
+                  <span className="bg-amber-400/20 text-amber-300 text-[10px] px-1.5 py-0.2 rounded border border-amber-400/30">
+                    +75 Credits
+                  </span>
+                </div>
+                <div className="text-[11px] text-slate-300">
+                  Submit verified issues with photo evidence to level up your Citizen Badge!
+                </div>
+              </div>
+            </div>
+            <div className="text-right pl-2">
+              <div className="text-xs font-extrabold text-amber-300">⭐ {citizen.credits}</div>
+              <div className="text-[10px] text-slate-400">{citizen.level.split('·')[0]}</div>
+            </div>
+          </div>
+        )}
+
         <div className="text-center mb-6">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Report a Civic Issue
@@ -205,23 +261,31 @@ export default function ComplaintForm() {
 
           {/* Photo Upload with Live Preview */}
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-              3. Attach Photo (Optional)
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                3. Attach Photo Evidence
+              </label>
+              <span className="text-[10px] font-semibold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/30">
+                +25 Bonus Credits
+              </span>
+            </div>
             
             {imagePreview ? (
               <div className="relative rounded-xl overflow-hidden border border-indigo-500/40 bg-slate-900 p-2 flex items-center gap-3">
                 <img
                   src={imagePreview}
                   alt="Issue preview"
+                  onError={(e) => {
+                    e.currentTarget.src = getCategoryFallbackImage(category)
+                  }}
                   className="w-20 h-20 object-cover rounded-lg border border-slate-700"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="text-xs font-medium text-emerald-400 flex items-center gap-1">
-                    <span>✓</span> Photo ready for submission
+                    <span>✓</span> Photo ready (+25 bonus credits)
                   </div>
                   <p className="text-xs text-slate-400 truncate mt-0.5">
-                    {imageFile?.name || 'Uploaded photo'}
+                    {imageFile?.name || 'Uploaded evidence photo'}
                   </p>
                   <button
                     type="button"
@@ -280,12 +344,12 @@ export default function ComplaintForm() {
 
             <div>
               <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                Your Name
+                Citizen Name
               </label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Anonymous Citizen"
+                placeholder="Citizen Name"
                 className="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
@@ -303,12 +367,12 @@ export default function ComplaintForm() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                 </svg>
-                <span>Routing to Department & Checking Duplicates...</span>
+                <span>Routing to Department & Calculating Credits...</span>
               </>
             ) : (
               <>
                 <span>🚀</span>
-                <span>Submit Complaint</span>
+                <span>Submit Complaint & Claim Rewards</span>
               </>
             )}
           </button>
@@ -329,6 +393,22 @@ export default function ComplaintForm() {
       {submittedComplaint && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
           <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl text-left relative overflow-hidden animate-scaleUp">
+            {/* Reward Notification Banner */}
+            <div className="bg-gradient-to-r from-amber-500/20 to-emerald-500/20 border border-amber-500/40 rounded-xl p-3 mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="text-2xl">🎉</span>
+                <div>
+                  <div className="text-xs font-bold text-amber-300">
+                    +{submittedComplaint.creditsEarned} Civic Karma Credits Awarded!
+                  </div>
+                  <div className="text-[11px] text-slate-300">
+                    New Balance: <span className="font-bold text-white">⭐ {submittedComplaint.updatedCitizen.credits} pts</span> ({submittedComplaint.updatedCitizen.level.split('·')[0]})
+                  </div>
+                </div>
+              </div>
+              <span className="text-lg">{submittedComplaint.updatedCitizen.badge.split(' ')[0]}</span>
+            </div>
+
             {/* Header Badge */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2">
@@ -380,18 +460,23 @@ export default function ComplaintForm() {
                 </span>
               </div>
               <div className="flex justify-between py-1">
-                <span className="text-slate-400">Reporter:</span>
-                <span className="text-slate-300">{submittedComplaint.complaint.reporter_name}</span>
+                <span className="text-slate-400">Citizen Reporter:</span>
+                <span className="text-slate-300 font-medium">
+                  {submittedComplaint.complaint.reporter_name}
+                </span>
               </div>
             </div>
 
-            {/* Photo attached if any */}
+            {/* Photo attached */}
             {submittedComplaint.complaint.image_url && (
               <div className="mb-4">
                 <div className="text-[11px] text-slate-400 mb-1">Evidence Photo Attached:</div>
                 <img
                   src={submittedComplaint.complaint.image_url}
                   alt="Submitted evidence"
+                  onError={(e) => {
+                    e.currentTarget.src = getCategoryFallbackImage(submittedComplaint.complaint.category)
+                  }}
                   className="w-full h-28 object-cover rounded-lg border border-slate-700"
                 />
               </div>
@@ -410,7 +495,7 @@ export default function ComplaintForm() {
                 onClick={() => setSubmittedComplaint(null)}
                 className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium py-2 px-4 rounded-xl text-xs transition"
               >
-                Submit Another Report
+                Submit Another Report (+75 Credits)
               </button>
             </div>
           </div>

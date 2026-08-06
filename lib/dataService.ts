@@ -1,5 +1,89 @@
 import { Complaint, supabase, isSupabaseConfigured, CATEGORY_DEPARTMENT } from './supabase'
 
+// High-resolution, self-contained SVG banners guaranteed to NEVER 404 or fail to load
+export const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
+  pothole: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300"><defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%231e293b"/><stop offset="100%" stop-color="%230f172a"/></linearGradient></defs><rect width="600" height="300" fill="url(%23bg)"/><path d="M50,150 Q150,120 250,150 T450,150 T550,150" stroke="%23334155" stroke-width="8" fill="none"/><ellipse cx="300" cy="160" rx="140" ry="55" fill="%23020617" stroke="%23f59e0b" stroke-width="4" stroke-dasharray="8,6"/><ellipse cx="300" cy="165" rx="100" ry="35" fill="%231e1b4b"/><text x="300" y="240" fill="%23f8fafc" font-size="20" font-family="sans-serif" font-weight="bold" text-anchor="middle">⚠️ Pothole / Road Surface Defect</text><text x="300" y="265" fill="%2394a3b8" font-size="13" font-family="sans-serif" text-anchor="middle">Assigned to: PWD Infrastructure Division</text></svg>`,
+  
+  garbage: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300"><defs><linearGradient id="gbg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23064e3b"/><stop offset="100%" stop-color="%230f172a"/></linearGradient></defs><rect width="600" height="300" fill="url(%23gbg)"/><rect x="230" y="100" width="140" height="110" rx="12" fill="%23047857" stroke="%2310b981" stroke-width="4"/><path d="M210,95 L390,95" stroke="%2334d399" stroke-width="8" stroke-linecap="round"/><circle cx="300" cy="150" r="28" fill="%23065f46" stroke="%236ee7b7" stroke-width="2"/><text x="300" y="157" fill="%23ecfdf5" font-size="22" font-family="sans-serif" font-weight="bold" text-anchor="middle">♻️</text><text x="300" y="245" fill="%23f8fafc" font-size="20" font-family="sans-serif" font-weight="bold" text-anchor="middle">🗑️ Waste & Garbage Accumulation</text><text x="300" y="270" fill="%236ee7b7" font-size="13" font-family="sans-serif" text-anchor="middle">Assigned to: Solid Waste Management</text></svg>`,
+  
+  drain: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300"><defs><linearGradient id="dbg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%230c4a6e"/><stop offset="100%" stop-color="%230f172a"/></linearGradient></defs><rect width="600" height="300" fill="url(%23dbg)"/><circle cx="300" cy="140" r="65" fill="%230284c7" fill-opacity="0.2" stroke="%2338bdf8" stroke-width="4"/><path d="M250,140 Q300,100 350,140 T450,140" stroke="%2338bdf8" stroke-width="6" fill="none"/><path d="M150,160 Q250,120 350,160" stroke="%237dd3fc" stroke-width="4" fill="none"/><text x="300" y="148" fill="%23ffffff" font-size="30" font-family="sans-serif" text-anchor="middle">💧</text><text x="300" y="245" fill="%23f8fafc" font-size="20" font-family="sans-serif" font-weight="bold" text-anchor="middle">💧 Drainage & Sewage Overflow</text><text x="300" y="270" fill="%237dd3fc" font-size="13" font-family="sans-serif" text-anchor="middle">Assigned to: KMC Drainage Division</text></svg>`,
+  
+  streetlight: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300"><defs><linearGradient id="lbg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23451a03"/><stop offset="100%" stop-color="%230f172a"/></linearGradient><radialGradient id="glow"><stop offset="0%" stop-color="%23fbbf24" stop-opacity="0.8"/><stop offset="100%" stop-color="%23fbbf24" stop-opacity="0"/></radialGradient></defs><rect width="600" height="300" fill="url(%23lbg)"/><circle cx="300" cy="120" r="75" fill="url(%23glow)"/><circle cx="300" cy="120" r="30" fill="%23fef08a" stroke="%23f59e0b" stroke-width="3"/><rect x="295" y="145" width="10" height="80" fill="%2394a3b8"/><text x="300" y="130" fill="%2378350f" font-size="26" font-family="sans-serif" text-anchor="middle">💡</text><text x="300" y="250" fill="%23f8fafc" font-size="20" font-family="sans-serif" font-weight="bold" text-anchor="middle">💡 Streetlight & Power Fault</text><text x="300" y="275" fill="%23fde047" font-size="13" font-family="sans-serif" text-anchor="middle">Assigned to: CESC Power Corporation</text></svg>`,
+}
+
+export function getCategoryFallbackImage(category: string): string {
+  return CATEGORY_FALLBACK_IMAGES[category] || CATEGORY_FALLBACK_IMAGES['pothole']
+}
+
+// Citizen Rewards / Credit System
+export interface CitizenProfile {
+  name: string
+  credits: number
+  level: string
+  reportsCount: number
+  badge: string
+}
+
+const CITIZEN_KEY = 'civic_citizen_profile_v2'
+
+export const DEFAULT_CITIZEN: CitizenProfile = {
+  name: 'Ananya Roy',
+  credits: 450,
+  level: 'Level 3 · Civic Champion',
+  reportsCount: 8,
+  badge: '🏅 Star Citizen',
+}
+
+export function getCitizenProfile(): CitizenProfile {
+  if (typeof window === 'undefined') return DEFAULT_CITIZEN
+  try {
+    const saved = localStorage.getItem(CITIZEN_KEY)
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (parsed && typeof parsed.credits === 'number') return parsed
+    }
+  } catch (e) {}
+  try {
+    localStorage.setItem(CITIZEN_KEY, JSON.stringify(DEFAULT_CITIZEN))
+  } catch (e) {}
+  return DEFAULT_CITIZEN
+}
+
+export function addCitizenCredits(amount: number): CitizenProfile {
+  const current = getCitizenProfile()
+  const newCredits = current.credits + amount
+  const newReports = current.reportsCount + 1
+  
+  let newLevel = 'Level 1 · Active Citizen'
+  let newBadge = '🌱 Contributor'
+  if (newCredits >= 500) {
+    newLevel = 'Level 4 · Prime Guardian'
+    newBadge = '👑 Civic Leader'
+  } else if (newCredits >= 400) {
+    newLevel = 'Level 3 · Civic Champion'
+    newBadge = '🏅 Star Citizen'
+  } else if (newCredits >= 200) {
+    newLevel = 'Level 2 · Ward Scout'
+    newBadge = '⭐ Verified Reporter'
+  }
+
+  const updated: CitizenProfile = {
+    ...current,
+    credits: newCredits,
+    reportsCount: newReports,
+    level: newLevel,
+    badge: newBadge,
+  }
+
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem(CITIZEN_KEY, JSON.stringify(updated))
+      window.dispatchEvent(new Event('civic_citizen_updated'))
+    } catch (e) {}
+  }
+  return updated
+}
+
 export const INITIAL_COMPLAINTS: Complaint[] = [
   {
     id: 'c1',
@@ -7,7 +91,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Large pothole near Gariahat crossing, causing major traffic slowdown during rush hour',
     latitude: 22.5185,
     longitude: 88.3654,
-    image_url: 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=600&auto=format&fit=crop&q=80',
+    image_url: CATEGORY_FALLBACK_IMAGES.pothole,
     status: 'pending',
     department: 'PWD',
     is_duplicate_of: null,
@@ -20,7 +104,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Deep pothole on AJC Bose Road flyover ramp dangerous for two-wheelers',
     latitude: 22.5390,
     longitude: 88.3540,
-    image_url: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&auto=format&fit=crop&q=80',
+    image_url: CATEGORY_FALLBACK_IMAGES.pothole,
     status: 'in_progress',
     department: 'PWD',
     is_duplicate_of: null,
@@ -33,7 +117,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Garbage pile not collected for a week near Lake Market, creating severe stench',
     latitude: 22.5170,
     longitude: 88.3600,
-    image_url: 'https://images.unsplash.com/photo-1605600659908-0ef719419d41?w=600&auto=format&fit=crop&q=80',
+    image_url: CATEGORY_FALLBACK_IMAGES.garbage,
     status: 'pending',
     department: 'Solid Waste Mgmt',
     is_duplicate_of: null,
@@ -46,7 +130,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Overflowing bin outside New Market entrance cleared and disinfected',
     latitude: 22.5620,
     longitude: 88.3520,
-    image_url: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80',
+    image_url: CATEGORY_FALLBACK_IMAGES.garbage,
     status: 'resolved',
     department: 'Solid Waste Mgmt',
     is_duplicate_of: null,
@@ -59,7 +143,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Drain overflow flooding pedestrian footpath near Park Circus 7-point crossing',
     latitude: 22.5390,
     longitude: 88.3720,
-    image_url: 'https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=600&auto=format&fit=crop&q=80',
+    image_url: CATEGORY_FALLBACK_IMAGES.drain,
     status: 'pending',
     department: 'KMC Drainage',
     is_duplicate_of: null,
@@ -72,7 +156,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Blocked stormwater drain causing waterlogging in Ballygunge Circular Rd',
     latitude: 22.5245,
     longitude: 88.3650,
-    image_url: null,
+    image_url: CATEGORY_FALLBACK_IMAGES.drain,
     status: 'in_progress',
     department: 'KMC Drainage',
     is_duplicate_of: null,
@@ -85,7 +169,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Streetlight not functioning outside Rabindra Sadan cultural complex',
     latitude: 22.5430,
     longitude: 88.3520,
-    image_url: 'https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop&q=80',
+    image_url: CATEGORY_FALLBACK_IMAGES.streetlight,
     status: 'pending',
     department: 'CESC',
     is_duplicate_of: null,
@@ -98,7 +182,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Three consecutive high-mast streetlights out near Gol Park rotary',
     latitude: 22.5165,
     longitude: 88.3670,
-    image_url: null,
+    image_url: CATEGORY_FALLBACK_IMAGES.streetlight,
     status: 'pending',
     department: 'CESC',
     is_duplicate_of: null,
@@ -111,7 +195,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Pothole widening after recent rain near Gariahat crossing',
     latitude: 22.5187,
     longitude: 88.3656,
-    image_url: null,
+    image_url: CATEGORY_FALLBACK_IMAGES.pothole,
     status: 'pending',
     department: 'PWD',
     is_duplicate_of: 'c1',
@@ -124,7 +208,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Construction debris dumped illegally near Jadavpur 8B bus stand',
     latitude: 22.4990,
     longitude: 88.3710,
-    image_url: 'https://images.unsplash.com/photo-1605600659908-0ef719419d41?w=600&auto=format&fit=crop&q=80',
+    image_url: CATEGORY_FALLBACK_IMAGES.garbage,
     status: 'pending',
     department: 'Solid Waste Mgmt',
     is_duplicate_of: null,
@@ -137,7 +221,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Sewage smell and overflow resolved near Kalighat temple road',
     latitude: 22.5200,
     longitude: 88.3420,
-    image_url: null,
+    image_url: CATEGORY_FALLBACK_IMAGES.drain,
     status: 'resolved',
     department: 'KMC Drainage',
     is_duplicate_of: null,
@@ -150,7 +234,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Flickering LED streetlight pole repaired in Southern Avenue',
     latitude: 22.5090,
     longitude: 88.3550,
-    image_url: null,
+    image_url: CATEGORY_FALLBACK_IMAGES.streetlight,
     status: 'resolved',
     department: 'CESC',
     is_duplicate_of: null,
@@ -163,7 +247,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Multiple road surface craters near Tollygunge metro station exit gate 2',
     latitude: 22.4990,
     longitude: 88.3480,
-    image_url: 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=600&auto=format&fit=crop&q=80',
+    image_url: CATEGORY_FALLBACK_IMAGES.pothole,
     status: 'in_progress',
     department: 'PWD',
     is_duplicate_of: null,
@@ -176,7 +260,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Garbage accumulation cleared near Behala Tram Depot market area',
     latitude: 22.4930,
     longitude: 88.3140,
-    image_url: null,
+    image_url: CATEGORY_FALLBACK_IMAGES.garbage,
     status: 'resolved',
     department: 'Solid Waste Mgmt',
     is_duplicate_of: null,
@@ -185,7 +269,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   },
 ]
 
-const STORAGE_KEY = 'civic_complaints_db_v2'
+const STORAGE_KEY = 'civic_complaints_db_v3'
 
 export function getStoredComplaints(): Complaint[] {
   if (typeof window === 'undefined') return INITIAL_COMPLAINTS
@@ -223,12 +307,11 @@ export function findLocalDuplicates(category: string, lat: number, lng: number):
     if (c.category !== category) return false
     const latDiff = Math.abs(c.latitude - lat)
     const lngDiff = Math.abs(c.longitude - lng)
-    // ~0.002 degrees lat/lng is roughly 220 meters
     return latDiff < 0.002 && lngDiff < 0.002
   })
 }
 
-// Add a new complaint (works 100% offline/demo & syncs with Supabase if online)
+// Add a new complaint + award citizen credits!
 export async function createComplaint(data: {
   category: 'pothole' | 'garbage' | 'drain' | 'streetlight'
   description: string
@@ -236,9 +319,11 @@ export async function createComplaint(data: {
   longitude: number
   image_url: string | null
   reporter_name?: string
-}): Promise<{ complaint: Complaint; duplicateCount: number }> {
+}): Promise<{ complaint: Complaint; duplicateCount: number; creditsEarned: number; updatedCitizen: CitizenProfile }> {
   const current = getStoredComplaints()
   const dupes = findLocalDuplicates(data.category, data.latitude, data.longitude)
+
+  const finalImageUrl = data.image_url || getCategoryFallbackImage(data.category)
 
   const newComplaint: Complaint = {
     id: 'civic-' + Math.random().toString(36).substring(2, 9),
@@ -246,16 +331,20 @@ export async function createComplaint(data: {
     description: data.description || `${CATEGORY_DEPARTMENT[data.category]} Issue reported`,
     latitude: data.latitude,
     longitude: data.longitude,
-    image_url: data.image_url,
+    image_url: finalImageUrl,
     status: 'pending',
     department: CATEGORY_DEPARTMENT[data.category] || 'Civic Services',
     is_duplicate_of: dupes.length > 0 ? dupes[0].id : null,
-    reporter_name: data.reporter_name || 'Anonymous Citizen',
+    reporter_name: data.reporter_name || 'Ananya Roy',
     created_at: new Date().toISOString(),
   }
 
   // Prepend to local storage so it immediately shows at top of feed & map
   saveStoredComplaints([newComplaint, ...current])
+
+  // Award credits: +50 base + 25 bonus if photo attached
+  const creditsEarned = data.image_url ? 75 : 50
+  const updatedCitizen = addCitizenCredits(creditsEarned)
 
   // Try optional Supabase sync in background (never throws or blocks)
   if (isSupabaseConfigured()) {
@@ -273,7 +362,7 @@ export async function createComplaint(data: {
     } catch (e) {}
   }
 
-  return { complaint: newComplaint, duplicateCount: dupes.length }
+  return { complaint: newComplaint, duplicateCount: dupes.length, creditsEarned, updatedCitizen }
 }
 
 // Update complaint status (Admin)
@@ -293,7 +382,9 @@ export async function updateComplaintStatus(id: string, status: 'pending' | 'in_
 export function resetToSeedData(): Complaint[] {
   if (typeof window !== 'undefined') {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_COMPLAINTS))
+    localStorage.setItem(CITIZEN_KEY, JSON.stringify(DEFAULT_CITIZEN))
     window.dispatchEvent(new Event('civic_complaints_updated'))
+    window.dispatchEvent(new Event('civic_citizen_updated'))
   }
   return INITIAL_COMPLAINTS
 }

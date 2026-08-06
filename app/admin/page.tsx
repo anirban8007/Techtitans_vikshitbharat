@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Complaint } from '@/lib/supabase'
-import { getStoredComplaints, updateComplaintStatus, resetToSeedData } from '@/lib/dataService'
+import { getStoredComplaints, updateComplaintStatus, resetToSeedData, getCategoryFallbackImage, getCitizenProfile, CitizenProfile } from '@/lib/dataService'
 
 const CATEGORY_ICON: Record<string, string> = {
   pothole: '🕳️',
@@ -21,9 +21,11 @@ export default function AdminPanel() {
   const [departmentFilter, setDepartmentFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
   const [toastMessage, setToastMessage] = useState<string | null>(null)
+  const [citizen, setCitizen] = useState<CitizenProfile | null>(null)
 
   const reloadData = () => {
     setComplaints(getStoredComplaints())
+    setCitizen(getCitizenProfile())
   }
 
   useEffect(() => {
@@ -143,6 +145,14 @@ export default function AdminPanel() {
         </div>
 
         <div className="flex items-center gap-2.5">
+          {citizen && (
+            <div className="hidden sm:flex items-center gap-1.5 bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-lg text-xs">
+              <span className="text-amber-400">⭐</span>
+              <span className="text-slate-300 font-medium">{citizen.name}</span>
+              <span className="text-amber-400 font-bold">({citizen.credits} pts)</span>
+            </div>
+          )}
+
           <button
             onClick={() => {
               resetToSeedData()
@@ -231,7 +241,7 @@ export default function AdminPanel() {
                   <th className="px-4 py-3">ID & Evidence</th>
                   <th className="px-4 py-3">Category & Description</th>
                   <th className="px-4 py-3">Assigned Department</th>
-                  <th className="px-4 py-3">Reporter</th>
+                  <th className="px-4 py-3">Citizen Reporter & Karma</th>
                   <th className="px-4 py-3">Current Status (Action)</th>
                 </tr>
               </thead>
@@ -240,17 +250,14 @@ export default function AdminPanel() {
                   <tr key={c.id} className="hover:bg-slate-850 transition">
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center gap-2.5">
-                        {c.image_url ? (
-                          <img
-                            src={c.image_url}
-                            alt="Evidence"
-                            className="w-10 h-10 object-cover rounded-lg border border-slate-700"
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-500 text-xs">
-                            No Pic
-                          </div>
-                        )}
+                        <img
+                          src={c.image_url || getCategoryFallbackImage(c.category)}
+                          alt={c.category}
+                          onError={(e) => {
+                            e.currentTarget.src = getCategoryFallbackImage(c.category)
+                          }}
+                          className="w-12 h-12 object-cover rounded-lg border border-slate-700 bg-slate-950"
+                        />
                         <div>
                           <div className="font-mono text-slate-300 font-bold">{c.id.toUpperCase()}</div>
                           <div className="text-[10px] text-slate-500">
@@ -281,8 +288,13 @@ export default function AdminPanel() {
                       </span>
                     </td>
 
-                    <td className="px-4 py-3 whitespace-nowrap text-slate-400">
-                      {c.reporter_name || 'Anonymous'}
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <div className="font-medium text-slate-300">
+                        👤 {c.reporter_name || 'Citizen'}
+                      </div>
+                      <div className="text-[10px] font-bold text-amber-400 mt-0.5">
+                        ⭐ 450 Civic Credits
+                      </div>
                     </td>
 
                     <td className="px-4 py-3 whitespace-nowrap">
