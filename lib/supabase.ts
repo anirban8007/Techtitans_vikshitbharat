@@ -5,6 +5,15 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholde
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
+export const isSupabaseConfigured = () => {
+  return (
+    Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
+    process.env.NEXT_PUBLIC_SUPABASE_URL !== 'https://placeholder.supabase.co' &&
+    Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== 'placeholder'
+  )
+}
+
 export type Complaint = {
   id: string
   category: 'pothole' | 'garbage' | 'drain' | 'streetlight'

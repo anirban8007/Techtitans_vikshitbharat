@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase, CATEGORY_DEPARTMENT } from '@/lib/supabase'
+import { supabase, CATEGORY_DEPARTMENT, isSupabaseConfigured } from '@/lib/supabase'
 
 const CATEGORIES = [
   { value: 'pothole', label: '🕳️ Pothole' },
@@ -40,6 +40,10 @@ export default function ComplaintForm() {
     e.preventDefault()
     if (!coords) {
       alert('Please capture location first')
+      return
+    }
+    if (!isSupabaseConfigured()) {
+      alert('⚠️ Missing Supabase configuration.\n\nPlease check that NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set in Vercel Project Settings > Environment Variables, and that you trigger a Redeploy on Vercel.')
       return
     }
     setSubmitting(true)
