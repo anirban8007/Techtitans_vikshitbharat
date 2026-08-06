@@ -4,7 +4,7 @@ import { Complaint, supabase, isSupabaseConfigured, CATEGORY_DEPARTMENT } from '
 export const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
   pothole: '/images/pothole1.jpg',
   garbage: '/images/garbage1.jpg',
-  drain: '/images/drain.jpg',
+  drain: '/images/drain1.jpg',
   streetlight: '/images/streetlight.jpg',
 }
 
@@ -140,7 +140,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Drain overflow flooding pedestrian footpath near Park Circus 7-point crossing',
     latitude: 22.5390,
     longitude: 88.3720,
-    image_url: '/images/drain.jpg',
+    image_url: '/images/drain1.jpg',
     status: 'pending',
     department: 'KMC Drainage',
     is_duplicate_of: null,
@@ -153,7 +153,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Blocked stormwater drain causing waterlogging in Ballygunge Circular Rd',
     latitude: 22.5245,
     longitude: 88.3650,
-    image_url: '/images/drain.jpg',
+    image_url: '/images/drain2.jpg',
     status: 'in_progress',
     department: 'KMC Drainage',
     is_duplicate_of: null,
@@ -218,7 +218,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Sewage smell and overflow resolved near Kalighat temple road',
     latitude: 22.5200,
     longitude: 88.3420,
-    image_url: '/images/drain.jpg',
+    image_url: '/images/drain3.jpg',
     status: 'resolved',
     department: 'KMC Drainage',
     is_duplicate_of: null,
@@ -266,7 +266,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   },
 ]
 
-const STORAGE_KEY = 'civic_complaints_db_v7'
+const STORAGE_KEY = 'civic_complaints_db_v8'
 
 export function getStoredComplaints(): Complaint[] {
   if (typeof window === 'undefined') return INITIAL_COMPLAINTS
