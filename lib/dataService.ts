@@ -2,14 +2,14 @@ import { Complaint, supabase, isSupabaseConfigured, CATEGORY_DEPARTMENT } from '
 
 // Real photographic civic evidence images bundled locally in /public/images/
 export const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
-  pothole: '/images/pothole.jpg',
+  pothole: '/images/pothole1.jpg',
   garbage: '/images/garbage.jpg',
   drain: '/images/drain.jpg',
   streetlight: '/images/streetlight.jpg',
 }
 
 export function getCategoryFallbackImage(category: string): string {
-  return CATEGORY_FALLBACK_IMAGES[category] || '/images/pothole.jpg'
+  return CATEGORY_FALLBACK_IMAGES[category] || '/images/pothole1.jpg'
 }
 
 // Citizen Rewards / Credit System
@@ -88,7 +88,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Large pothole near Gariahat crossing, causing major traffic slowdown during rush hour',
     latitude: 22.5185,
     longitude: 88.3654,
-    image_url: '/images/pothole.jpg',
+    image_url: '/images/pothole1.jpg',
     status: 'pending',
     department: 'PWD',
     is_duplicate_of: null,
@@ -101,7 +101,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Deep pothole on AJC Bose Road flyover ramp dangerous for two-wheelers',
     latitude: 22.5390,
     longitude: 88.3540,
-    image_url: '/images/pothole.jpg',
+    image_url: '/images/pothole2.jpg',
     status: 'in_progress',
     department: 'PWD',
     is_duplicate_of: null,
@@ -192,7 +192,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Pothole widening after recent rain near Gariahat crossing',
     latitude: 22.5187,
     longitude: 88.3656,
-    image_url: '/images/pothole.jpg',
+    image_url: '/images/pothole3.jpg',
     status: 'pending',
     department: 'PWD',
     is_duplicate_of: 'c1',
@@ -244,7 +244,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Multiple road surface craters near Tollygunge metro station exit gate 2',
     latitude: 22.4990,
     longitude: 88.3480,
-    image_url: '/images/pothole.jpg',
+    image_url: '/images/pothole4.jpg',
     status: 'in_progress',
     department: 'PWD',
     is_duplicate_of: null,
@@ -266,7 +266,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   },
 ]
 
-const STORAGE_KEY = 'civic_complaints_db_v5'
+const STORAGE_KEY = 'civic_complaints_db_v6'
 
 export function getStoredComplaints(): Complaint[] {
   if (typeof window === 'undefined') return INITIAL_COMPLAINTS
