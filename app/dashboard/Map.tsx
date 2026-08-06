@@ -16,7 +16,7 @@ L.Icon.Default.mergeOptions({
 const STATUS_COLOR: Record<string, string> = {
   pending: '#ef4444',
   in_progress: '#f59e0b',
-  resolved: '#22c55e',
+  resolved: '#10b981',
 }
 
 const CATEGORY_ICON: Record<string, string> = {
@@ -28,36 +28,81 @@ const CATEGORY_ICON: Record<string, string> = {
 
 export default function Map({ complaints }: { complaints: Complaint[] }) {
   const center: [number, number] =
-    complaints.length > 0 ? [complaints[0].latitude, complaints[0].longitude] : [22.5726, 88.3639]
+    complaints.length > 0 ? [complaints[0].latitude, complaints[0].longitude] : [22.5286, 88.3580]
 
   return (
-    <MapContainer center={center} zoom={12} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }}>
+    <MapContainer
+      center={center}
+      zoom={12}
+      scrollWheelZoom={true}
+      className="h-full w-full z-10"
+      style={{ minHeight: '100%', width: '100%' }}
+    >
       <TileLayer
-        attribution='&copy; OpenStreetMap contributors'
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {complaints.map((c) => (
-        <Marker
-          key={c.id}
-          position={[c.latitude, c.longitude]}
-          icon={L.divIcon({
-            html: `<div style="background:${STATUS_COLOR[c.status]};width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.4)"></div>`,
-            className: '',
-            iconSize: [14, 14],
-          })}
-        >
-          <Popup>
-            <div className="text-sm">
-              <div className="font-semibold">{CATEGORY_ICON[c.category]} {c.category}</div>
-              <div className="text-slate-600">{c.description}</div>
-              <div className="mt-1 text-xs uppercase tracking-wide" style={{ color: STATUS_COLOR[c.status] }}>
-                {c.status.replace('_', ' ')}
+      {complaints.map((c) => {
+        const color = STATUS_COLOR[c.status] || '#6366f1'
+        const iconHtml = `<div style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2.5px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.5); transform: scale(1); transition: transform 0.2s;"></div>`
+
+        return (
+          <Marker
+            key={c.id}
+            position={[c.latitude, c.longitude]}
+            icon={L.divIcon({
+              html: iconHtml,
+              className: 'custom-leaflet-marker',
+              iconSize: [16, 16],
+              iconAnchor: [8, 8],
+            })}
+          >
+            <Popup className="custom-popup" minWidth={220} maxWidth={280}>
+              <div className="text-slate-900 font-sans p-1">
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <span className="font-bold text-xs uppercase tracking-wide flex items-center gap-1 text-slate-800">
+                    <span>{CATEGORY_ICON[c.category] || '📍'}</span>
+                    <span>{c.category}</span>
+                  </span>
+                  <span
+                    className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full text-white"
+                    style={{ backgroundColor: color }}
+                  >
+                    {c.status.replace('_', ' ')}
+                  </span>
+                </div>
+
+                {c.image_url && (
+                  <div className="mb-2 rounded-lg overflow-hidden border border-slate-200">
+                    <img
+                      src={c.image_url}
+                      alt={c.category}
+                      className="w-full h-24 object-cover"
+                    />
+                  </div>
+                )}
+
+                <p className="text-xs text-slate-700 leading-snug line-clamp-3 mb-2 font-normal">
+                  {c.description}
+                </p>
+
+                <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500">
+                  <span className="font-semibold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded">
+                    {c.department || 'Civic'}
+                  </span>
+                  <span>{new Date(c.created_at).toLocaleDateString()}</span>
+                </div>
+
+                {c.is_duplicate_of && (
+                  <div className="mt-1.5 bg-amber-50 border border-amber-200 text-amber-800 text-[10px] px-2 py-0.5 rounded font-medium">
+                    ⚡ Linked duplicate report
+                  </div>
+                )}
               </div>
-              {c.is_duplicate_of && <div className="text-xs text-amber-600 mt-1">Flagged as duplicate</div>}
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+            </Popup>
+          </Marker>
+        )
+      })}
     </MapContainer>
   )
 }
