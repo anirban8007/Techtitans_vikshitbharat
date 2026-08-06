@@ -3,7 +3,7 @@ import { Complaint, supabase, isSupabaseConfigured, CATEGORY_DEPARTMENT } from '
 // Real photographic civic evidence images bundled locally in /public/images/
 export const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
   pothole: '/images/pothole1.jpg',
-  garbage: '/images/garbage.jpg',
+  garbage: '/images/garbage1.jpg',
   drain: '/images/drain.jpg',
   streetlight: '/images/streetlight.jpg',
 }
@@ -114,7 +114,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Garbage pile not collected for a week near Lake Market, creating severe stench',
     latitude: 22.5170,
     longitude: 88.3600,
-    image_url: '/images/garbage.jpg',
+    image_url: '/images/garbage1.jpg',
     status: 'pending',
     department: 'Solid Waste Mgmt',
     is_duplicate_of: null,
@@ -127,7 +127,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Overflowing bin outside New Market entrance cleared and disinfected',
     latitude: 22.5620,
     longitude: 88.3520,
-    image_url: '/images/garbage.jpg',
+    image_url: '/images/garbage2.jpg',
     status: 'resolved',
     department: 'Solid Waste Mgmt',
     is_duplicate_of: null,
@@ -205,7 +205,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Construction debris dumped illegally near Jadavpur 8B bus stand',
     latitude: 22.4990,
     longitude: 88.3710,
-    image_url: '/images/garbage.jpg',
+    image_url: '/images/garbage3.jpg',
     status: 'pending',
     department: 'Solid Waste Mgmt',
     is_duplicate_of: null,
@@ -257,7 +257,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Garbage accumulation cleared near Behala Tram Depot market area',
     latitude: 22.4930,
     longitude: 88.3140,
-    image_url: '/images/garbage.jpg',
+    image_url: '/images/garbage4.jpg',
     status: 'resolved',
     department: 'Solid Waste Mgmt',
     is_duplicate_of: null,
@@ -266,7 +266,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   },
 ]
 
-const STORAGE_KEY = 'civic_complaints_db_v6'
+const STORAGE_KEY = 'civic_complaints_db_v7'
 
 export function getStoredComplaints(): Complaint[] {
   if (typeof window === 'undefined') return INITIAL_COMPLAINTS
