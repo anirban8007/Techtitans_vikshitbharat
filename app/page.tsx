@@ -44,45 +44,62 @@ export default function ComplaintForm() {
     }
     setSubmitting(true)
 
-    // Rule-based duplicate check before inserting
-    const { data: dupes } = await supabase.rpc('find_duplicates', {
-      p_category: category,
-      p_lat: coords.lat,
-      p_lng: coords.lng,
-    })
-    setDuplicateWarning(dupes?.length || 0)
-
-    let image_url: string | null = null
-    if (image) {
-      const fileName = `${Date.now()}-${image.name}`
-      const { data: uploadData, error: uploadErr } = await supabase.storage
-        .from('complaint-images')
-        .upload(fileName, image)
-      if (!uploadErr && uploadData) {
-        image_url = supabase.storage.from('complaint-images').getPublicUrl(uploadData.path).data.publicUrl
+    try {
+      // Rule-based duplicate check before inserting
+      let dupes: any[] | null = null
+      try {
+        const { data } = await supabase.rpc('find_duplicates', {
+          p_category: category,
+          p_lat: coords.lat,
+          p_lng: coords.lng,
+        })
+        dupes = data
+      } catch (e) {
+        console.warn('Duplicate check error:', e)
       }
-    }
+      setDuplicateWarning(dupes?.length || 0)
 
-    const { error } = await supabase.from('complaints').insert({
-      category,
-      description,
-      latitude: coords.lat,
-      longitude: coords.lng,
-      image_url,
-      department: CATEGORY_DEPARTMENT[category],
-      reporter_name: name || 'Anonymous',
-      is_duplicate_of: dupes && dupes.length > 0 ? dupes[0].id : null,
-    })
+      let image_url: string | null = null
+      if (image) {
+        try {
+          const cleanFileName = `${Date.now()}-${image.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
+          const { data: uploadData, error: uploadErr } = await supabase.storage
+            .from('complaint-images')
+            .upload(cleanFileName, image)
+          if (!uploadErr && uploadData) {
+            image_url = supabase.storage.from('complaint-images').getPublicUrl(uploadData.path).data.publicUrl
+          } else if (uploadErr) {
+            console.warn('Storage upload warning:', uploadErr.message)
+          }
+        } catch (imgErr) {
+          console.warn('Storage upload error:', imgErr)
+        }
+      }
 
-    setSubmitting(false)
-    if (!error) {
-      setSuccess(true)
-      setDescription('')
-      setName('')
-      setImage(null)
-      setCoords(null)
-    } else {
-      alert('Error submitting: ' + error.message)
+      const { error } = await supabase.from('complaints').insert({
+        category,
+        description,
+        latitude: coords.lat,
+        longitude: coords.lng,
+        image_url,
+        department: CATEGORY_DEPARTMENT[category],
+        reporter_name: name || 'Anonymous',
+        is_duplicate_of: dupes && dupes.length > 0 ? dupes[0].id : null,
+      })
+
+      setSubmitting(false)
+      if (!error) {
+        setSuccess(true)
+        setDescription('')
+        setName('')
+        setImage(null)
+        setCoords(null)
+      } else {
+        alert('Error submitting: ' + error.message)
+      }
+    } catch (err: any) {
+      setSubmitting(false)
+      alert('Error submitting: ' + (err?.message || 'Network error'))
     }
   }
 

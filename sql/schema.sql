@@ -28,7 +28,17 @@ create policy "public insert" on complaints
 create policy "public update" on complaints
   for update using (true);
 
--- Storage bucket for complaint photos (create via Supabase dashboard: Storage > New bucket > "complaint-images" > public)
+-- Storage bucket for complaint photos & policies
+insert into storage.buckets (id, name, public)
+values ('complaint-images', 'complaint-images', true)
+on conflict (id) do nothing;
+
+create policy "public storage upload" on storage.objects
+  for insert with check (bucket_id = 'complaint-images');
+
+create policy "public storage read" on storage.objects
+  for select using (bucket_id = 'complaint-images');
+
 
 -- Duplicate detection: rule-based, run as a query when a new complaint comes in.
 -- Same category + within ~150m + within 48 hours = likely duplicate.
