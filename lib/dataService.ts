@@ -5,7 +5,7 @@ export const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
   pothole: '/images/pothole1.jpg',
   garbage: '/images/garbage1.jpg',
   drain: '/images/drain1.jpg',
-  streetlight: '/images/streetlight.jpg',
+  streetlight: '/images/streetlight1.jpg',
 }
 
 export function getCategoryFallbackImage(category: string): string {
@@ -166,7 +166,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Streetlight not functioning outside Rabindra Sadan cultural complex',
     latitude: 22.5430,
     longitude: 88.3520,
-    image_url: '/images/streetlight.jpg',
+    image_url: '/images/streetlight1.jpg',
     status: 'pending',
     department: 'CESC',
     is_duplicate_of: null,
@@ -179,7 +179,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Three consecutive high-mast streetlights out near Gol Park rotary',
     latitude: 22.5165,
     longitude: 88.3670,
-    image_url: '/images/streetlight.jpg',
+    image_url: '/images/streetlight2.jpg',
     status: 'pending',
     department: 'CESC',
     is_duplicate_of: null,
@@ -231,7 +231,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Flickering LED streetlight pole repaired in Southern Avenue',
     latitude: 22.5090,
     longitude: 88.3550,
-    image_url: '/images/streetlight.jpg',
+    image_url: '/images/streetlight3.jpg',
     status: 'resolved',
     department: 'CESC',
     is_duplicate_of: null,
@@ -266,7 +266,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   },
 ]
 
-const STORAGE_KEY = 'civic_complaints_db_v8'
+const STORAGE_KEY = 'civic_complaints_db_v9'
 
 export function getStoredComplaints(): Complaint[] {
   if (typeof window === 'undefined') return INITIAL_COMPLAINTS
