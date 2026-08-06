@@ -21,10 +21,10 @@ export interface CitizenProfile {
   badge: string
 }
 
-const CITIZEN_KEY = 'civic_citizen_profile_v2'
+const CITIZEN_KEY = 'civic_citizen_profile_v3'
 
 export const DEFAULT_CITIZEN: CitizenProfile = {
-  name: 'Ananya Roy',
+  name: 'Diya Ghosh',
   credits: 450,
   level: 'Level 3 · Civic Champion',
   reportsCount: 8,
@@ -105,7 +105,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     status: 'in_progress',
     department: 'PWD',
     is_duplicate_of: null,
-    reporter_name: 'Ananya Roy',
+    reporter_name: 'Diya Ghosh',
     created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
   },
   {
@@ -266,7 +266,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   },
 ]
 
-const STORAGE_KEY = 'civic_complaints_db_v9'
+const STORAGE_KEY = 'civic_complaints_db_v10'
 
 export function getStoredComplaints(): Complaint[] {
   if (typeof window === 'undefined') return INITIAL_COMPLAINTS
@@ -332,7 +332,7 @@ export async function createComplaint(data: {
     status: 'pending',
     department: CATEGORY_DEPARTMENT[data.category] || 'Civic Services',
     is_duplicate_of: dupes.length > 0 ? dupes[0].id : null,
-    reporter_name: data.reporter_name || 'Ananya Roy',
+    reporter_name: data.reporter_name || 'Diya Ghosh',
     created_at: new Date().toISOString(),
   }
 

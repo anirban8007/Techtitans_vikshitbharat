@@ -3,7 +3,7 @@
 
 insert into complaints (category, description, latitude, longitude, status, department, reporter_name, created_at) values
 ('pothole', 'Large pothole near Gariahat crossing, causing traffic slowdown', 22.5185, 88.3654, 'pending', 'PWD', 'Ritwik Sen', now() - interval '2 days'),
-('pothole', 'Deep pothole on AJC Bose Road flyover ramp', 22.5390, 88.3540, 'in_progress', 'PWD', 'Ananya Roy', now() - interval '1 day'),
+('pothole', 'Deep pothole on AJC Bose Road flyover ramp', 22.5390, 88.3540, 'in_progress', 'PWD', 'Diya Ghosh', now() - interval '1 day'),
 ('garbage', 'Garbage pile not collected for a week near Lake Market', 22.5170, 88.3600, 'pending', 'Solid Waste Mgmt', 'Sourav Ghosh', now() - interval '3 days'),
 ('garbage', 'Overflowing bin outside New Market entrance', 22.5620, 88.3520, 'resolved', 'Solid Waste Mgmt', 'Priya Das', now() - interval '5 days'),
 ('drain', 'Drain overflow flooding footpath near Park Circus', 22.5390, 88.3720, 'pending', 'KMC Drainage', 'Arjun Mukherjee', now() - interval '12 hours'),
