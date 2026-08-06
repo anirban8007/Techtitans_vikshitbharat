@@ -1,18 +1,15 @@
 import { Complaint, supabase, isSupabaseConfigured, CATEGORY_DEPARTMENT } from './supabase'
 
-// High-resolution SVG banners matching the clean 60-30-10 palette
+// Real photographic civic evidence images bundled locally in /public/images/
 export const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
-  pothole: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300"><defs><linearGradient id="pbg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23f1f5f9"/><stop offset="100%" stop-color="%23e2e8f0"/></linearGradient></defs><rect width="600" height="300" fill="url(%23pbg)"/><path d="M50,150 Q150,120 250,150 T450,150 T550,150" stroke="%2394a3b8" stroke-width="6" fill="none"/><ellipse cx="300" cy="150" rx="130" ry="50" fill="%23334155"/><ellipse cx="300" cy="155" rx="90" ry="30" fill="%231e293b"/><circle cx="300" cy="150" r="28" fill="%23fef3c7" stroke="%23d97706" stroke-width="2"/><text x="300" y="158" fill="%23b45309" font-size="22" font-family="sans-serif" font-weight="bold" text-anchor="middle">🕳️</text><text x="300" y="240" fill="%230f172a" font-size="18" font-family="sans-serif" font-weight="bold" text-anchor="middle">Pothole / Road Surface Defect</text><text x="300" y="265" fill="%23475569" font-size="13" font-family="sans-serif" font-weight="600" text-anchor="middle">Assigned to: PWD Infrastructure Division</text></svg>`,
-  
-  garbage: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300"><defs><linearGradient id="gbg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23ecfdf5"/><stop offset="100%" stop-color="%23d1fae5"/></linearGradient></defs><rect width="600" height="300" fill="url(%23gbg)"/><rect x="230" y="95" width="140" height="110" rx="12" fill="%23059669" stroke="%23047857" stroke-width="3"/><path d="M210,90 L390,90" stroke="%2310b981" stroke-width="8" stroke-linecap="round"/><circle cx="300" cy="145" r="26" fill="%23ffffff"/><text x="300" y="153" fill="%23047857" font-size="22" font-family="sans-serif" font-weight="bold" text-anchor="middle">♻️</text><text x="300" y="240" fill="%230f172a" font-size="18" font-family="sans-serif" font-weight="bold" text-anchor="middle">Waste & Garbage Accumulation</text><text x="300" y="265" fill="%23047857" font-size="13" font-family="sans-serif" font-weight="600" text-anchor="middle">Assigned to: Solid Waste Management</text></svg>`,
-  
-  drain: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300"><defs><linearGradient id="dbg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23f0f9ff"/><stop offset="100%" stop-color="%23e0f2fe"/></linearGradient></defs><rect width="600" height="300" fill="url(%23dbg)"/><circle cx="300" cy="135" r="60" fill="%230284c7" fill-opacity="0.15" stroke="%230284c7" stroke-width="3"/><path d="M240,135 Q290,100 340,135 T440,135" stroke="%230284c7" stroke-width="5" fill="none"/><path d="M160,155 Q250,120 340,155" stroke="%2338bdf8" stroke-width="4" fill="none"/><circle cx="300" cy="135" r="26" fill="%23ffffff"/><text x="300" y="143" fill="%230369a1" font-size="22" font-family="sans-serif" text-anchor="middle">💧</text><text x="300" y="240" fill="%230f172a" font-size="18" font-family="sans-serif" font-weight="bold" text-anchor="middle">Drainage & Sewage Overflow</text><text x="300" y="265" fill="%230284c7" font-size="13" font-family="sans-serif" font-weight="600" text-anchor="middle">Assigned to: KMC Drainage Division</text></svg>`,
-  
-  streetlight: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300"><defs><linearGradient id="lbg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23fefce8"/><stop offset="100%" stop-color="%23fef08a"/></linearGradient><radialGradient id="glow"><stop offset="0%" stop-color="%23f59e0b" stop-opacity="0.6"/><stop offset="100%" stop-color="%23f59e0b" stop-opacity="0"/></radialGradient></defs><rect width="600" height="300" fill="url(%23lbg)"/><circle cx="300" cy="115" r="70" fill="url(%23glow)"/><circle cx="300" cy="115" r="28" fill="%23ffffff" stroke="%23f59e0b" stroke-width="3"/><rect x="296" y="140" width="8" height="75" fill="%2364748b"/><text x="300" y="123" fill="%23b45309" font-size="22" font-family="sans-serif" text-anchor="middle">💡</text><text x="300" y="240" fill="%230f172a" font-size="18" font-family="sans-serif" font-weight="bold" text-anchor="middle">Streetlight & Power Fault</text><text x="300" y="265" fill="%23b45309" font-size="13" font-family="sans-serif" font-weight="600" text-anchor="middle">Assigned to: CESC Power Corporation</text></svg>`,
+  pothole: '/images/pothole.jpg',
+  garbage: '/images/garbage.jpg',
+  drain: '/images/drain.jpg',
+  streetlight: '/images/streetlight.jpg',
 }
 
 export function getCategoryFallbackImage(category: string): string {
-  return CATEGORY_FALLBACK_IMAGES[category] || CATEGORY_FALLBACK_IMAGES['pothole']
+  return CATEGORY_FALLBACK_IMAGES[category] || '/images/pothole.jpg'
 }
 
 // Citizen Rewards / Credit System
@@ -91,7 +88,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Large pothole near Gariahat crossing, causing major traffic slowdown during rush hour',
     latitude: 22.5185,
     longitude: 88.3654,
-    image_url: CATEGORY_FALLBACK_IMAGES.pothole,
+    image_url: '/images/pothole.jpg',
     status: 'pending',
     department: 'PWD',
     is_duplicate_of: null,
@@ -104,7 +101,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Deep pothole on AJC Bose Road flyover ramp dangerous for two-wheelers',
     latitude: 22.5390,
     longitude: 88.3540,
-    image_url: CATEGORY_FALLBACK_IMAGES.pothole,
+    image_url: '/images/pothole.jpg',
     status: 'in_progress',
     department: 'PWD',
     is_duplicate_of: null,
@@ -117,7 +114,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Garbage pile not collected for a week near Lake Market, creating severe stench',
     latitude: 22.5170,
     longitude: 88.3600,
-    image_url: CATEGORY_FALLBACK_IMAGES.garbage,
+    image_url: '/images/garbage.jpg',
     status: 'pending',
     department: 'Solid Waste Mgmt',
     is_duplicate_of: null,
@@ -130,7 +127,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Overflowing bin outside New Market entrance cleared and disinfected',
     latitude: 22.5620,
     longitude: 88.3520,
-    image_url: CATEGORY_FALLBACK_IMAGES.garbage,
+    image_url: '/images/garbage.jpg',
     status: 'resolved',
     department: 'Solid Waste Mgmt',
     is_duplicate_of: null,
@@ -143,7 +140,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Drain overflow flooding pedestrian footpath near Park Circus 7-point crossing',
     latitude: 22.5390,
     longitude: 88.3720,
-    image_url: CATEGORY_FALLBACK_IMAGES.drain,
+    image_url: '/images/drain.jpg',
     status: 'pending',
     department: 'KMC Drainage',
     is_duplicate_of: null,
@@ -156,7 +153,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Blocked stormwater drain causing waterlogging in Ballygunge Circular Rd',
     latitude: 22.5245,
     longitude: 88.3650,
-    image_url: CATEGORY_FALLBACK_IMAGES.drain,
+    image_url: '/images/drain.jpg',
     status: 'in_progress',
     department: 'KMC Drainage',
     is_duplicate_of: null,
@@ -169,7 +166,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Streetlight not functioning outside Rabindra Sadan cultural complex',
     latitude: 22.5430,
     longitude: 88.3520,
-    image_url: CATEGORY_FALLBACK_IMAGES.streetlight,
+    image_url: '/images/streetlight.jpg',
     status: 'pending',
     department: 'CESC',
     is_duplicate_of: null,
@@ -182,7 +179,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Three consecutive high-mast streetlights out near Gol Park rotary',
     latitude: 22.5165,
     longitude: 88.3670,
-    image_url: CATEGORY_FALLBACK_IMAGES.streetlight,
+    image_url: '/images/streetlight.jpg',
     status: 'pending',
     department: 'CESC',
     is_duplicate_of: null,
@@ -195,7 +192,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Pothole widening after recent rain near Gariahat crossing',
     latitude: 22.5187,
     longitude: 88.3656,
-    image_url: CATEGORY_FALLBACK_IMAGES.pothole,
+    image_url: '/images/pothole.jpg',
     status: 'pending',
     department: 'PWD',
     is_duplicate_of: 'c1',
@@ -208,7 +205,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Construction debris dumped illegally near Jadavpur 8B bus stand',
     latitude: 22.4990,
     longitude: 88.3710,
-    image_url: CATEGORY_FALLBACK_IMAGES.garbage,
+    image_url: '/images/garbage.jpg',
     status: 'pending',
     department: 'Solid Waste Mgmt',
     is_duplicate_of: null,
@@ -221,7 +218,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Sewage smell and overflow resolved near Kalighat temple road',
     latitude: 22.5200,
     longitude: 88.3420,
-    image_url: CATEGORY_FALLBACK_IMAGES.drain,
+    image_url: '/images/drain.jpg',
     status: 'resolved',
     department: 'KMC Drainage',
     is_duplicate_of: null,
@@ -234,7 +231,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Flickering LED streetlight pole repaired in Southern Avenue',
     latitude: 22.5090,
     longitude: 88.3550,
-    image_url: CATEGORY_FALLBACK_IMAGES.streetlight,
+    image_url: '/images/streetlight.jpg',
     status: 'resolved',
     department: 'CESC',
     is_duplicate_of: null,
@@ -247,7 +244,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Multiple road surface craters near Tollygunge metro station exit gate 2',
     latitude: 22.4990,
     longitude: 88.3480,
-    image_url: CATEGORY_FALLBACK_IMAGES.pothole,
+    image_url: '/images/pothole.jpg',
     status: 'in_progress',
     department: 'PWD',
     is_duplicate_of: null,
@@ -260,7 +257,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
     description: 'Garbage accumulation cleared near Behala Tram Depot market area',
     latitude: 22.4930,
     longitude: 88.3140,
-    image_url: CATEGORY_FALLBACK_IMAGES.garbage,
+    image_url: '/images/garbage.jpg',
     status: 'resolved',
     department: 'Solid Waste Mgmt',
     is_duplicate_of: null,
@@ -269,7 +266,7 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   },
 ]
 
-const STORAGE_KEY = 'civic_complaints_db_v4'
+const STORAGE_KEY = 'civic_complaints_db_v5'
 
 export function getStoredComplaints(): Complaint[] {
   if (typeof window === 'undefined') return INITIAL_COMPLAINTS
