@@ -39,7 +39,7 @@ graph TD
 
 ### 3. 📊 Live Public Transparency Dashboard (`/dashboard`)
 - **Real-Time Metric Cards**: Displays live counters for **Total Reports**, **Pending Action**, **In Progress**, and **Resolved**.
-- **Interactive OpenStreetMap GIS**: Visualizes all civic incidents on an interactive map with color-coded markers:
+- **Interactive googlemaps GIS**: Visualizes all civic incidents on an interactive map with color-coded markers:
   - 🔴 **Red**: Pending Verification
   - 🟡 **Amber**: Work In Progress
   - 🟢 **Green**: Resolved & Verified
@@ -96,24 +96,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🎬 90-Second Demo Video Script for Hackathon Presentation
-
-1. **Introduction (0:00 - 0:15)**:
-   - *"Welcome to CivicConnect, built for Vikshit Bharat to revolutionize municipal transparency and citizen grievance redressal."*
-2. **Citizen Complaint Submission (0:15 - 0:40)**:
-   - Open the homepage (`/`).
-   - Select **🕳️ Pothole**, upload a photo, click **Capture Location**, and click **Submit Complaint**.
-   - Show the **Confirmation Modal** highlighting the auto-assigned PWD department and Ticket ID.
-3. **Public GIS Dashboard (0:40 - 1:05)**:
-   - Navigate to `/dashboard`.
-   - Show the live counter update, interactive OpenStreetMap with colored pins, and filter by category (e.g. `Potholes`).
-   - Click a pin to show the popup with the photo and status.
-4. **Municipal Officer Triage (1:05 - 1:30)**:
-   - Go to `/admin`, click **1-Click Demo Login**.
-   - Change a complaint's status from **Pending** to **Resolved**.
-   - Switch back to `/dashboard` to show the marker turn **Green (Resolved)** and the resolved counter increment instantly!
-
----
 
 ## 👥 Team TechTitans
 Built with ❤️ for a smarter, cleaner, and digitally empowered Vikshit Bharat.
