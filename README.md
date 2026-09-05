@@ -1,5 +1,4 @@
 # 🏛️ CivicConnect — Smart Civic Grievance & Transparency Platform
-### *Developed by Team TechTitans for Vikshit Bharat Hackathon*
 
 CivicConnect is a next-generation civic issue reporting and municipal transparency platform. It empowers citizens to report civic infrastructure problems (potholes, garbage accumulation, drainage overflows, streetlight failures) with photo evidence and GPS coordinates, while automating departmental routing, geospatial duplicate detection, and live resolution tracking.
 
